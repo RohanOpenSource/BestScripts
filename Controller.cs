@@ -3,29 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Controller : MonoBehaviour
+public class Controller : MonoBehaviour //interface MonoBehavior provides methods Start() Update() OnCollisionEnter() OnCollisionExit()
 {
+//Fields marked as public are to be changed in the inspector
     public float speed = 5;
     private float cms;
     private float cs;
-
-    public bool isGrounded;
+    private bool isGrounded;
     public float sensitivity = 10;
-    public Vector2 movementInput;
+    private Vector2 movementInput;
     private Vector2 localEulerAnglesInput;
     public LayerMask ground;
     public float JumpForce=10f;
     public Transform playerCam;
     private Rigidbody rb;
-    public bool isWallRunning=false;
+    private bool isWallRunning=false;
     private float camRot;
-    private float camY;
+    //called on start
     private void Start() {
+        //assign rigidbody
         rb=GetComponent<Rigidbody>();
-        camY=playerCam.localPosition.y;
+        //lock cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+    //called every frame
     private void Update() {
         float mousey = Input.GetAxisRaw("Mouse Y");
         movementInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -46,7 +48,7 @@ public class Controller : MonoBehaviour
                 
                 if (playerCam.localEulerAngles.z < 15f || playerCam.localEulerAngles.z>345f )
                 {
-                    
+                    //we multiply by Time.deltaTime to make frame rate not affect speed
                     playerCam.localEulerAngles += new Vector3(0, 0, 100f*Time.deltaTime);
                 }
                 
@@ -70,7 +72,6 @@ public class Controller : MonoBehaviour
         }
         cs = sensitivity;
         cms=speed;
-        //playerCam.localPosition=new Vector3(playerCam.localPosition.x,camY,playerCam.localPosition.z);
         if(isWallRunning && isGrounded){
             isWallRunning=false;
         }
@@ -102,12 +103,15 @@ public class Controller : MonoBehaviour
     }
 
     private bool canWallRun=true;
+    //called when collision is entered
     private void OnCollisionEnter(Collision other) {
+        //using dot product to make sure we are infront of or behind the collision normal and not on top of or below
         if(Mathf.Abs(Vector3.Dot(other.GetContact(0).normal,Vector3.up))<0.1f && canWallRun){
             rb.velocity=new Vector3(0,20,0)+  transform.forward * 50;
             isWallRunning=true;
         }
     }
+    //called on collision exit
     void OnCollisionExit(Collision other)
     {
         isWallRunning=false;
