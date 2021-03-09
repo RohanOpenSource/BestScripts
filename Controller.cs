@@ -7,7 +7,9 @@ public class Controller : MonoBehaviour //interface MonoBehavior provides method
 {
 //Fields marked as public are to be changed in the inspector
     public float speed = 5;
+    //cms is current move speed and is here so you can control the move speed via script
     private float cms;
+    //cs is current sensitivity and is here so you can control the sensitivity via script
     private float cs;
     private bool isGrounded;
     public float sensitivity = 10;
@@ -65,6 +67,7 @@ public class Controller : MonoBehaviour //interface MonoBehavior provides method
         }
         else
         {
+            //90 fov is the best fov don't argue with me
             playerCam.GetComponent<Camera>().fieldOfView = 90;
         }
         if(isWallRunning && rb.velocity.magnitude<=30){
